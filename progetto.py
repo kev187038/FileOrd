@@ -8,13 +8,15 @@ from pathlib import PurePath
 from pathlib import PurePosixPath
 import threading
 import logging
+import time
 import sys
 import PyQt5
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QLabel, QGridLayout, QMessageBox, QLineEdit
 
-def background_task(dir_queue):
 
+def background_task(dir1, dir2):
+    dir_queue = [dir1, dir2]
     while True:
         #2 argomenti: uno è source e il secondo è destination
         #il processo prende come argomenti la cartella in cui vengono sempre messe le foto(tipo download) e lo controlla
@@ -33,18 +35,17 @@ def confirmation_action(field_src, field_des):
 
     if (not os.path.isdir(dir1)) or (not os.path.isdir(dir2)):
         msg = QMessageBox()
-        msg.setText("Paths don't exist. Please retry.")
+        msg.setText("Both paths or one of them don't exist. Please retry.")
         msg.exec_()
     else:
-        two_dirs = [dir1, dir2]
-        background_task(two_dirs)
+        thread = threading.Thread(target=background_task, daemon=True, args=(dir1, dir2))
+        thread.start()
 
-def main():
 
-    dir1 = "/home/student/Desktop/dir1"
-    dir2 = "/home/student/Desktop/dir2"
-    
-    lista_file = os.listdir(dir1)        
+def close_action(win):
+    win.hide()
+
+def main():        
 
     app = QApplication(sys.argv)
     win = QMainWindow()
@@ -76,6 +77,12 @@ def main():
     confirmation_button.setText("Confirm")
     confirmation_button.clicked.connect(lambda:confirmation_action(Src_field, Des_field))
     confirmation_button.move(800,500)
+
+    hide_button = QPushButton(win)
+    hide_button.setText("Close window")
+    hide_button.clicked.connect(lambda: close_action(win))
+    hide_button.adjustSize()
+    hide_button.move(100,500)
 
 
     win.show()
