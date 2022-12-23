@@ -11,9 +11,10 @@ import logging
 import time
 import sys
 import PyQt5
+import PyQt5.uic
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QLabel, QGridLayout, QMessageBox, QLineEdit
-
+from PyQt5.QtWidgets import QMainWindow, QFileSystemModel, QApplication, QWidget, QPushButton, QLabel, QGridLayout, QMessageBox, QLineEdit 
+        
 
 def background_task(dir1, dir2):
     dir_queue = [dir1, dir2]
@@ -45,12 +46,18 @@ def confirmation_action(field_src, field_des):
 def close_action(win):
     win.hide()
 
+def search_action(text):
+    dir_path = os.getcwd()
+    dir_name = QtWidgets.QFileDialog.getExistingDirectory(None,"Open dir", dir_path)
+    text.setText(dir_name)
+
+
 def main():        
 
     app = QApplication(sys.argv)
     win = QMainWindow()
     win.setGeometry(500, 200, 1000, 700)
-    win.setWindowTitle("Progetto")
+    win.setWindowTitle("FileOrd")
 
     Label = QtWidgets.QLabel(win)
     Label.setText("Source Folder")
@@ -84,6 +91,17 @@ def main():
     hide_button.adjustSize()
     hide_button.move(100,500)
 
+    search_button_1 = QPushButton(win)
+    search_button_1.setText("Search on local")
+    search_button_1.clicked.connect(lambda: search_action(Src_field))
+    search_button_1.adjustSize()
+    search_button_1.move(50,200)
+
+    search_button_2 = QPushButton(win)
+    search_button_2.setText("Search on local")
+    search_button_2.clicked.connect(lambda: search_action(Des_field))
+    search_button_2.adjustSize()
+    search_button_2.move(800,200)
 
     win.show()
     sys.exit(app.exec())
