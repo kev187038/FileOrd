@@ -28,7 +28,7 @@ def background_task(dir1, dir2):
             if(PurePosixPath(i).suffix == '.jpeg'):
                 os.system("mv "+ "'"+ dir_queue[0] + "/" + i + "'  '" + dir_queue[1] +"'")
 
-        time.sleep(5) # faccio dormire il process per alleggerirlo
+        time.sleep(10) # faccio dormire il process per alleggerirlo
 
 def confirmation_action(field_src, field_des):
     dir1 = field_src.text()
@@ -36,10 +36,10 @@ def confirmation_action(field_src, field_des):
 
     if (not os.path.isdir(dir1)) or (not os.path.isdir(dir2)):
         msg = QMessageBox()
-        msg.setText("Both paths or one of them don't exist. Please retry.")
+        msg.setText("One of the specified paths or both of them do not exist. Please retry.")
         msg.exec_()
     else:
-        thread = threading.Thread(target=background_task, daemon=True, args=(dir1, dir2))
+        thread = threading.Thread(target=background_task, args=(dir1, dir2))
         thread.start()
 
 
